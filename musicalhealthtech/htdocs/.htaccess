@@ -1,0 +1,20 @@
+#BOF
+
+RewriteEngine On
+
+###aliases
+RewriteRule ^privacypolicy$|^privacypolicy/$ /privacy-policy [R,L]
+RewriteRule ^blog$|^blog/$ /category/blog [R,L]
+RewriteRule ^news$|^news/$ /category/news [R,L]
+RewriteRule ^wordpress-administration$|^wordpress-administration/$ /wordpress-current/wp-admin [R,L]
+
+###wordpress
+
+RewriteBase /
+
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+
+#EOF

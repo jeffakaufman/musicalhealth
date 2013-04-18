@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{PAGE_TITLE}</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="resources/editing.css" />
+	</head>
+	<body>
+		<div id="container">
+			<div id="topnav" class="noselect">
+				<a href="?an=editing.view&amp;r=allproducts">All Products</a> | 
+				<a href="?an=editing.view&amp;r=newproduct">New Product</a> | 
+				<span class="nohref noselect">All Songs</span> | 
+				<a href="?an=editing.view&amp;r=newsong">New Song</a> |
+				<a href="?an=editing.view&amp;r=catalogreport">Catalog Report</a>
+			</div>
+			<table>
+				<tr><td class="label head">Song Title</td><td class="head">Song Author</td><td class="head">Song Artist</td><td class="action"></td></tr>
+				{SONG_LIST}
+			</table>
+			<div class="elementline"></div>
+		</div>
+	</body>
+</html>

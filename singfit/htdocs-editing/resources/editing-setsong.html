@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{PAGE_TITLE}</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="resources/editing.css" />
+		<link rel="stylesheet" type="text/css" href="resources/vendor/pixelmatrix-uniform-2446d99/css/uniform.default.css" />
+		<script type="text/javascript" src="resources/vendor/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="resources/vendor/jquery.form.min.js"></script>
+		<script type="text/javascript" src="resources/vendor/jquery.alphanumeric.pack.js"></script>
+		<script type="text/javascript" src="resources/vendor/pixelmatrix-uniform-2446d99/jquery.uniform.patched.js"></script>
+		<script type="text/javascript" src="resources/editing-setsong.js"></script>
+	</head>
+	<body>
+		<div id="container" class="noselect">
+			<div id="topnav" class="noselect">
+				<a href="?an=editing.view&amp;r=allproducts">All Products</a> | 
+				<a href="?an=editing.view&amp;r=newproduct">New Product</a> | 
+				<a href="?an=editing.view&amp;r=allsongs">All Songs</a> | 
+				<span class="nohref noselect">{PAGE_TITLE}</span> |
+				<a href="?an=editing.view&amp;r=catalogreport">Catalog Report</a>
+			</div>
+			<div id="setsongformerror" class="error"></div>
+			<form id="setsongform" action="?an=editing.setsong" method="POST" enctype="multipart/form-data">
+				<input type="hidden" name="serverauthkey" value="{K_VALUE}" />
+				<input type="hidden" name="q" value="{Q_VALUE}" />
+				<input type="hidden" name="MAX_FILE_SIZE" value="209715200" />
+				<input type="hidden" name="creation_date" value="{CREATION_DATE}" />
+				<input type="hidden" name="slug" value="{SLUG}" />
+				<table>
+					<tr>
+						<td class="label noselect"><span class="plain">Title</span></td>
+						<td colspan="2">
+							<input class="alphanumeric" type="text" name="title" value="{TITLE}" maxlength="80" placeholder="Title" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Author</span> <small>(Singer/Interpreter/Band)</small></td>
+						<td colspan="2">
+							<input class="alphanumeric" type="text" name="author" value="{AUTHOR}" maxlength="80" placeholder="Author" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Song Package</span><br /><small>(Zip Archive, 200 Mb Max)</small></td>
+						<td>
+							<div class="noselect">
+								<input accept="application/zip, application/x-zip, application/x-zip-compressed" type="file" name="songpackage" />
+							</div>
+						</td>
+						<td class="noselect">
+							{RESOURCES_INFO}
+						</td>
+					</tr>
+				</table>	
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<table>
+					<tr>
+						<td class="label noselect"><span class="plain">Allow Song Sharing</span></td>
+						<td>
+							 <input type="checkbox" name="canbeshared" {CANBESHARED_STATUS} />
+						</td>
+					</tr>
+				</table>
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<table>
+					<tr>
+						<td class="label noselect"><span class="plain">Artist</span> <small>(Writer/Composer) (Optional)</small></td>
+						<td><input class="alphanumeric" type="text" name="artist" value="{ARTIST}" maxlength="80" placeholder="Artist" /></td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Producer</span> <small>(Optional)</small></td>
+						<td><input class="alphanumeric" type="text" name="producer" value="{PRODUCER}" maxlength="80" placeholder="Producer" /></td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Publisher</span> <small>(Optional)</small></td>
+						<td><input class="alphanumeric" type="text" name="publisher" value="{PUBLISHER}" maxlength="80" placeholder="Publisher" /></td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Publishing Year</span> <small>(Optional)</small></td>
+						<td>
+							<select name="publishing_year" id="publishing_year">
+								{PUBLISHING_YEAR_LIST}
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Re-Record Rights</span> <small>(Optional)</small></td>
+						<td><input class="alphanumeric" type="text" name="rerecord_rights" value="{RERECORD_RIGHTS}" placeholder="Re-Record Rights" /></td>
+					</tr>
+				</table>
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<div class="noselect">
+					<span class="plain">Credits</span> <small>(Optional)</small>
+				</div>
+				<textarea class="alphanumeric" rows="4" cols="30" name="credits" placeholder="Credits">{CREDITS}</textarea>
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<table>
+					<tr>
+						<td class="label noselect"><span class="plain">Length in Seconds</span> <small>(Optional)</small></td>
+						<td><input class="numeric" type="text" name="length_in_seconds" value="{LENGTH_IN_SECONDS}" maxlength="4" placeholder="0000" /></td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Musical Key</span> <small>(Optional)</small></td>
+						<td>
+							<select name="musical_key" id="musical_key">
+								{MUSICAL_KEY_LIST}
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Tempo BPM</span> <small>(Optional)</small></td>
+						<td><input class="numeric" type="text" name="tempo_bpm" value="{TEMPO_BPM}" maxlength="3" placeholder="000" /></td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Musical Era</span> <small>(Optional)</small></td>
+						<td>
+							<select name="musical_era" id="musical_era">
+								{MUSICAL_ERA_LIST}
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Difficulty Singing</span> <small>(Optional)</small></td>
+						<td>
+							<select name="difficulty_singing" id="difficulty_singing">
+								{DIFFICULTY_SINGING_LIST}
+							</select>
+						</td>
+					</tr>
+				</table>
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<div class="noselect">
+					<span class="plain">Notes</span> <small>(Optional)</small>
+				</div>
+				<textarea class="alphanumeric" rows="4" cols="30" name="notes" placeholder="Notes">{NOTES}</textarea>
+				<br />
+				<div class="buttoncontainer">
+					<input class= "noselect" id="setsongformsave" type="button" value="Save"  />
+				</div>
+			</form>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{PAGE_TITLE}</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="resources/editing.css" />
+		<script type="text/javascript" src="resources/vendor/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="resources/editing-allproducts.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="topnav" class="noselect">
+				<span class="nohref noselect">All Products</span> | 
+				<a href="?an=editing.view&amp;r=newproduct">New Product</a> | 
+				<a href="?an=editing.view&amp;r=allsongs">All Songs</a> | 
+				<a href="?an=editing.view&amp;r=newsong">New Song</a> |
+				<a href="?an=editing.view&amp;r=catalogreport">Catalog Report</a>
+			</div>
+			<table>
+				<tr><td class="label head">Product Name</td><td class="head">Product Short Identifier</td><td class="action"></td><td class="action"></td></tr>
+				{PRODUCT_LIST}
+			</table>
+			<div class="elementline"></div>
+		</div>
+	</body>
+</html>

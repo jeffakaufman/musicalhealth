@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{PAGE_TITLE}</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="resources/editing.css" />
+		<link rel="stylesheet" type="text/css" href="resources/vendor/pixelmatrix-uniform-2446d99/css/uniform.default.css" />
+		<script type="text/javascript" src="resources/vendor/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="resources/vendor/jquery.form.min.js"></script>
+		<script type="text/javascript" src="resources/vendor/jquery.alphanumeric.pack.js"></script>
+		<script type="text/javascript" src="resources/vendor/pixelmatrix-uniform-2446d99/jquery.uniform.patched.js"></script>
+		<script type="text/javascript" src="resources/editing.jquery.utils.js"></script>
+		<script type="text/javascript" src="resources/editing-setproduct.js"></script>
+	</head>
+	<body>
+		<div id="container" class="noselect">
+			<div id="topnav" class="noselect">
+				<a href="?an=editing.view&amp;r=allproducts">All Products</a> | 
+				<span class="nohref noselect">{PAGE_TITLE}</span> | 
+				<a href="?an=editing.view&amp;r=allsongs">All Songs</a> | 
+				<a href="?an=editing.view&amp;r=newsong">New Song</a> |
+				<a href="?an=editing.view&amp;r=catalogreport">Catalog Report</a>
+			</div>
+			<div id="setproductformerror" class="error"></div>
+			<form id="setproductform" action="?an=editing.setproduct" method="POST" enctype="multipart/form-data">
+				<input type="hidden" name="serverauthkey" value="{K_VALUE}" />
+				<input type="hidden" name="q" value="{Q_VALUE}" />
+				<input type="hidden" name="slug" value="{SLUG}" />
+				<table>
+					<tr>
+						<td class="label noselect"><span class="plain">Name</span></td>
+						<td>
+							<input type="text" name="apple_product_name" value="{APPLE_PRODUCT_NAME}" maxlength="80" placeholder="Name (Will change while adding a song)" />
+						</td>
+					</tr>
+					<tr>
+						<td class="label noselect"><span class="plain">Price in USD</span></td>
+						<td>
+							<input class="real" type="text" name="apple_product_price" value="{APPLE_PRODUCT_PRICE}" maxlength="6" placeholder="0.00 (Approximative to iTunes App Store tiers)" />
+						</td>
+					</tr>
+				</table>
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<div class="noselect">
+					<span class="plain">Product Identifier <small>(In-App purchase product Identifier)</small></span>
+					<input type="text" name="apple_product_id" value="{APPLE_PRODUCT_ID}" maxlength="255" placeholder="Product Identifier (Read-only value, will change while changing the product name)" readonly="readonly" />
+				</div>
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<table>
+					<tr>
+						<td>
+							 <input type="checkbox" name="freeforall" {FREEFORALL_STATUS} />
+						</td>
+						<td class="noselect"><span class="plain">Free for all users</span></td>
+						<td>
+							 <input type="checkbox" name="onlyforsubscriber" {ONLYFORSUBSCRIBER_STATUS} />
+						</td>
+						<td class="noselect"><span class="plain">Subscriber only</span></td>
+						<td>
+							 <input type="checkbox" name="freeforsubscriber" {FREEFORSUBSCRIBER_STATUS} />
+						</td>
+						<td class="noselect"><span class="plain">Free for a subscriber</span></td>
+					</tr>
+				</table>
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<table>
+					<tr>
+						<td class="label noselect"><span class="plain">Genres</span> <small>(Select and release to add)</small></td>
+						<td>
+							<select name="genre" id="genre">
+								{GENRE_LIST}
+							</select>
+						</td>
+					</tr>
+				</table>
+				{ATTACHED_GENRES_VIEW}
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<table>
+					<tr>
+						<td class="label noselect"><span class="plain">Features</span> <small>(Select and release to add)</small></td>
+						<td>
+							<select name="feature" id="feature">
+								{FEATURE_LIST}
+							</select>
+						</td>
+					</tr>
+				</table>
+				{ATTACHED_FEATURES_VIEW}
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<span class="plain">Contents</span>
+				<div class="elementspacer"></div>
+				{ATTACHED_SONGS_VIEW}
+				<div class="elementspacer"></div>
+				<div class="noselect">
+					<span class="plain">Find songs to add to this product <small>(From songs already uploaded into the catalog)</small></span>
+				</div>
+				<input class="alphanumeric" type="text" id="findsongsearch" value="" maxlength="80" placeholder="By Title or Author or Artist or Producer or Publisher" />
+				<div class="elementspacer"></div>
+				<div class="noselect" id="findsongresult"></div>
+				<br />
+				<div class="buttoncontainer">
+					<input class= "noselect" id="setproductformsave" type="button" value="Save"  />
+				</div>
+			</form>
+		</div>
+	</body>
+</html>

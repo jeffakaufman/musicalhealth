@@ -10,21 +10,22 @@ require_once dirname(__FILE__).'/SingFitStoreManager.php';
 require_once dirname(__FILE__).'/SingFitUploadSongMix.php';
 require_once dirname(__FILE__).'/SingFitAppViews.php';
 
-$_sigfit_services_request = null;
+$_singfit_services_request = null;
 
 function _SingFitServicesIsDeveloperRequest() {
+	global $_singfit_services_request;
 	$validrequest = false;
-	if (!isset($_sigfit_services_request['DEVELOPER'])) {
-		if (
+	if (!isset($_singfit_services_request['DEVELOPER'])) {
+	/**	if (
 			$_SERVER['REMOTE_ADDR'] == "99.8.139.39" || // Jeff Kaufman
 			$_SERVER['REMOTE_ADDR'] == "173.228.86.114" || // sww-office
 			$_SERVER['REMOTE_ADDR'] == "98.149.26.84" || // hayden-home
 			$_SERVER['REMOTE_ADDR'] == "71.198.38.33" || // mmw-home
 			$_SERVER['REMOTE_ADDR'] == "83.202.111.112" // mmw-home-paris
 		) {
-			$_sigfit_services_request['DEVELOPER'] = 'ON';
+			$_singfit_services_request['DEVELOPER'] = 'ON';
 			$validrequest = true;
-		}
+		}**/
 	} else {
 		$validrequest = true;
 	}
@@ -48,23 +49,24 @@ function SingFitServicesIsValidSecureRequest() {
 }
 
 function SingFitServicesRequest() {
-	global $_sigfit_services_request;
-	if ($_sigfit_services_request === null) {
-		$_sigfit_services_request = array();
-		$_sigfit_services_request['POST'] = array();
-		$_sigfit_services_request['GET'] = array();
-		$_sigfit_services_request['FILES'] = array();
+	global $_singfit_services_request;
+	if ($_singfit_services_request === null) {
+		$_singfit_services_request = array();
+		// $_singfit_services_request['DEVELOPER'] = 'ON';
+		$_singfit_services_request['POST'] = array();
+		$_singfit_services_request['GET'] = array();
+		$_singfit_services_request['FILES'] = array();
 		foreach($_POST as $k => $v) {
-			$_sigfit_services_request['POST'][$k] = $v;
+			$_singfit_services_request['POST'][$k] = $v;
 		}
 		foreach($_GET as $k => $v) {
-			$_sigfit_services_request['GET'][$k] = $v;
+			$_singfit_services_request['GET'][$k] = $v;
 		}
 		foreach($_FILES as $k => $v) {
-			$_sigfit_services_request['FILES'][$k] = $v;
+			$_singfit_services_request['FILES'][$k] = $v;
 		}
 	}
-	return $_sigfit_services_request;
+	return $_singfit_services_request;
 }
 
 function SingFitServicesRequestForSongInfo()

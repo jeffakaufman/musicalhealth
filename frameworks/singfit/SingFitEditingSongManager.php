@@ -107,6 +107,14 @@ function SingFitEditingSongManagerGetRawReport($request) {
 	if (false !== ($link = SingFitDataBaseConnect())) {
 		$date = mysql_escape_string($request['GET']['d']);
 		$sql = "select * from singfit_song where creation_date < '".$date."'";
+		$sql = "SELECT singfit_song.*, count(store_transaction_request.id) as downloads FROM singfit_song, store_transaction_request,
+		store_product, store_product_to_singfit_song WHERE 
+		store_transaction_request.apple_product_id = store_product.apple_product_id
+		AND store_product_to_singfit_song.product_id = store_product.id
+		AND store_product_to_singfit_song.song_id = singfit_song.id 
+		and creation_date < '%s'
+		group by singfit_song.id";
+		$sql = sprintf($sql, $date);
 		if (false !== ($res = mysql_query($sql, $link))) {
 			$fields = mysql_num_fields($res);
 			for ($i = 0; $i < $fields; $i++) {

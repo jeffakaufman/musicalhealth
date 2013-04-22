@@ -94,6 +94,7 @@ function SingFitEditingSetCatalogReportView($templatepath) {
 		'{PAGE_TITLE}',
 		'{REPORT_LIST}'
 	);
+	$conn = SingFitDataBaseConnect();
 	$list = '';
 	$current_year = date('Y');
 	$current_month = date('m');
@@ -102,6 +103,7 @@ function SingFitEditingSetCatalogReportView($templatepath) {
 	$list .= '<td class="action">&nbsp;</td>';
 	$list .= '<td style="width:200px"><small>Precalculated Text File</small></td>';
 	$list .= '<td><small>Raw CSV File</small></td>';
+	$list .= '<td><small>Total Downloads</small></td>';	
 	$list .= '</tr>';
 	for ($i = 1; $i <= 12; $i++) {
 		$m = ($i >= 12) ? 12 : $i;
@@ -109,10 +111,17 @@ function SingFitEditingSetCatalogReportView($templatepath) {
 			$m = 12;
 		}
 		$isodate = $last_year.'-'.sprintf("%02d", ($m)).'-01';
+		$date = date_create($isodate);
+		date_add($date, date_interval_create_from_date_string('1 month'));
+		$sql = "select count(*) from store_apple_transaction where transaction_date > '%s' and transaction_date < '%s'";
+		$result = mysql_query(sprintf($sql, $isodate, date_format($date, 'Y-m-d')));
+		$count = mysql_fetch_assoc($result);
+		
 		$list .= '<tr>';
 		$list .= '<td class="action">'.date("F", mktime(0, 0, 0, $m, 10)).'&nbsp;</td>';
 		$list .= '<td style="width:200px"><a href="?an=editing.downloadreport&amp;d='.$isodate.'">'.$isodate.'</a></td>';
 		$list .= '<td><a href="?an=editing.downloadreport&amp;d='.$isodate.'&amp;t=raw">'.$isodate.'</a></td>';
+		$list .= '<td>'.$count['count(*)'].'</td>';		
 		$list .= '</tr>';
 	}
 	for ($i = 1; $i <= 12; $i++) {
@@ -120,16 +129,23 @@ function SingFitEditingSetCatalogReportView($templatepath) {
 		if ($m >= 12) {
 			$m = 12;
 		}
+		$date = date_create($isodate);
+		date_add($date, date_interval_create_from_date_string('1 month'));
+		$sql = "select count(*) from store_apple_transaction where transaction_date > '%s' and transaction_date < '%s'";
+		$result = mysql_query(sprintf($sql, $isodate, date_format($date, 'Y-m-d')));
+		$count = mysql_fetch_assoc($result);
 		$isodate = $current_year.'-'.sprintf("%02d", ($m)).'-01';
 		$list .= '<tr>';
 		$list .= '<td class="action">'.date("F", mktime(0, 0, 0, $m, 10)).'&nbsp;</td>';
 		$list .= '<td style="width:200px"><a href="?an=editing.downloadreport&amp;d='.$isodate.'">'.$isodate.'</a></td>';
 		$list .= '<td><a href="?an=editing.downloadreport&amp;d='.$isodate.'&amp;t=raw">'.$isodate.'</a></td>';
+		$list .= '<td>'.$count['count(*)'].'</td>';
 		$list .= '</tr>';
 		if ($i >= $current_month) {
 			break;
 		}
 	}
+	SingFitDataBaseClose($conn);
 	$replace = array(
 		$page_title,
 		$list

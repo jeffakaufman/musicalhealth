@@ -7,6 +7,8 @@
 
 require_once dirname(__FILE__)."/SingFitEditingViews.php";
 require_once dirname(__FILE__)."/SingFitEditingProductManager.php";
+require_once dirname(__FILE__)."/SingFitEditingPlaylistManager.php";
+require_once dirname(__FILE__)."/SingFitEditingGenreManager.php";
 require_once dirname(__FILE__)."/SingFitEditingSongManager.php";
 require_once dirname(__FILE__)."/SingFitEditingUploadSong.php";
 require_once dirname(__FILE__)."/SingFitEditingResponse.php";
@@ -109,6 +111,44 @@ function SingFitEditingRequestForView($templateroot) {
 						$templateroot."/editing-catalogreport.html"
 					);
 			break;
+			
+			case 'newplaylist':
+			case 'editplaylist':			
+				SingFitEditingRequestNoCachedResponse();
+				$idplaylist = 0;
+				if (isset($request['GET']['idplaylist'])) {
+					$idplaylist = $request['GET']['idplaylist'];
+				}
+				return SingFitEditingSetPlaylistView(
+						$templateroot."/editing-setplaylist.html",
+						$idplaylist
+					);											
+			break;
+						
+			case 'newgenre':
+			case 'editgenre':			
+				SingFitEditingRequestNoCachedResponse();
+				$idgenre = 0;
+				if (isset($request['GET']['idgenre'])) {
+					$idgenre = $request['GET']['idgenre'];
+				}
+				return SingFitEditingSetGenreView(
+						$templateroot."/editing-setgenre.html",
+						$idgenre
+					);											
+			break;			
+
+			case 'allgenres':
+				return SingFitEditingAllGenreView(
+					$templateroot."/editing-allgenres.html"
+				);
+			break;		
+			
+			case 'allplaylists':
+				return SingFitEditingAllPlaylistView(
+					$templateroot."/editing-allplaylists.html"
+				);
+			break;			
 		}
 	}
 	return null;
@@ -126,11 +166,11 @@ function SingFitEditingRequestForReportDownload()
 			$filename = "singfit-catalog-precalculated-report-".mysql_escape_string($request['GET']['d']).".txt";
 		}
 	}
-	@header("Content-Type: application/octet-stream");
-	@header("Cache-Control: public, must-revalidate, max-age=0");
-	@header("Pragma: no-cache");
-	@header("Content-Disposition: attachment; filename=".$filename);
-	@header("Content-Transfer-Encoding: binary\n");
+//	@header("Content-Type: application/octet-stream");
+//	@header("Cache-Control: public, must-revalidate, max-age=0");
+//	@header("Pragma: no-cache");
+//	@header("Content-Disposition: attachment; filename=".$filename);
+//	@header("Content-Transfer-Encoding: binary\n");
 	echo $data;
 }
 
@@ -239,6 +279,105 @@ function SingFitEditingRequestForSetActivateProduct()
 	return null;
 }
 
+function SingFitEditingRequestForSetPlaylist() {
+	if (null != ($request = SingFitEditingIsValidSecureRequest())) {
+		$response = array(
+			'errno' => 0,
+			'msg' => ''
+		);
+		if (!isset($request['POST']['q'])) {
+			$response['errno'] = 100;
+			$response['msg'] = 'Wrong request.';
+		} else if ($request['POST']['q'] != 9004 && $request['POST']['q'] != 9005) {
+			$response['errno'] = 200;
+			$response['msg'] = 'Wrong request.';
+		} else if (strlen(trim($request['POST']['name'])) < 1) {
+			$response['errno'] = 300;
+			$response['msg'] = 'Please provide a playlist name.';
+		}
+		if ($response['errno'] == 0) {
+			$update = false;
+			if ($request['POST']['q'] == 9005) {
+				$update = true;
+			}
+			$idplaylist = $request['POST']['id'];
+			if (empty($idplaylist)) {
+				$update = false;
+			}
+			if (!$update && SingFitEditingPlaylistManagerPlaylistExists($request['POST']['name'])) {
+				$response['errno'] = 800;
+				$response['msg'] = 'This playlist already exists.';
+			}
+			if ($response['errno'] == 0) {
+				if (false === SingFitEditingPlaylistManagerSetPlaylist($request, $idplaylist, $update)) {
+					$response['errno'] = 808;
+					$response['msg'] = 'This request cannot be processed. Try Again.';
+				}
+			}
+		}
+		return SingFitEditingJSONResponse($response);
+	}
+	return null;
+}
+
+function SingFitEditingRequestForDeletePlaylist() {
+	if (null != ($request = SingFitEditingIsValidSecureRequest())) {
+		$response = array(
+			'errno' => 0,
+			'msg' => ''
+		);
+		if (!isset($request['POST']['q'])) {
+			$response['errno'] = 100;
+			$response['msg'] = 'Wrong request.';
+		} else if ($request['POST']['q'] != 992) {
+			$response['errno'] = 200;
+			$response['msg'] = 'Wrong request.';
+		} else if (!isset($request['POST']['id'])) {
+			$response['errno'] = 300;
+			$response['msg'] = 'Please provide a playlist id.';
+		}
+		if ($response['errno'] == 0) {
+			if ($response['errno'] == 0) {
+				if (false === SingFitEditingPlaylistManagerDeletePlaylist($request)) {
+					$response['errno'] = 808;
+					$response['msg'] = 'This request cannot be processed. Try Again.';
+				}
+			}
+		}
+		return SingFitEditingJSONResponse($response);
+	}
+	return null;
+}
+
+function SingFitEditingRequestForDeleteGenre() {
+	if (null != ($request = SingFitEditingIsValidSecureRequest())) {
+		$response = array(
+			'errno' => 0,
+			'msg' => ''
+		);
+		if (!isset($request['POST']['q'])) {
+			$response['errno'] = 100;
+			$response['msg'] = 'Wrong request.';
+		} else if ($request['POST']['q'] != 991) {
+			$response['errno'] = 200;
+			$response['msg'] = 'Wrong request.';
+		} else if (!isset($request['POST']['id'])) {
+			$response['errno'] = 300;
+			$response['msg'] = 'Please provide a playlist id.';
+		}
+		if ($response['errno'] == 0) {
+			if ($response['errno'] == 0) {
+				if (false === SingFitEditingGenreManagerDeleteGenre($request)) {
+					$response['errno'] = 808;
+					$response['msg'] = 'This request cannot be processed. Try Again.';
+				}
+			}
+		}
+		return SingFitEditingJSONResponse($response);
+	}
+	return null;
+}
+
 function SingFitEditingRequestForSetProduct() {
 	if (null != ($request = SingFitEditingIsValidSecureRequest())) {
 		$response = array(
@@ -264,6 +403,7 @@ function SingFitEditingRequestForSetProduct() {
 		if ($response['errno'] == 0) {
 			$genres = json_decode($request['POST']['attached_genres']);
 			$features = json_decode($request['POST']['attached_features']);
+			$playlists = json_decode($request['POST']['attached_playlists']);			
 			$err = 1;
 			$category = null;
 			if (is_array($genres) && is_array($features)) {
@@ -305,6 +445,46 @@ function SingFitEditingRequestForSetProduct() {
 			}
 			if ($response['errno'] == 0) {
 				if (false === SingFitEditingProductManagerSetProduct($request, $slug, $update)) {
+					$response['errno'] = 808;
+					$response['msg'] = 'This request cannot be processed. Try Again.';
+				}
+			}
+		}
+		return SingFitEditingJSONResponse($response);
+	}
+	return null;
+}
+
+function SingFitEditingRequestForSetGenre() {
+	if (null != ($request = SingFitEditingIsValidSecureRequest())) {
+		$response = array(
+			'errno' => 0,
+			'msg' => ''
+		);
+		if (!isset($request['POST']['q'])) {
+			$response['errno'] = 100;
+			$response['msg'] = 'Wrong request.';
+		} else if ($request['POST']['q'] != 9007 && $request['POST']['q'] != 9008) {
+			$response['errno'] = 200;
+			$response['msg'] = 'Wrong request.';
+		} else if (strlen(trim($request['POST']['name'])) < 1) {
+			$response['errno'] = 300;
+			$response['msg'] = 'Please provide a genre name.';
+		}
+		if ($response['errno'] == 0) {
+			$err = 1;			
+		}
+		if ($response['errno'] == 0) {
+			$update = false;
+			if ($request['POST']['q'] == 9008) {
+				$update = true;
+			}
+			if (!$update && SingFitEditingGenreManagerGenreExists($request['POST']['name'])) {
+				$response['errno'] = 800;
+				$response['msg'] = 'This genre already exists.';
+			}
+			if ($response['errno'] == 0) {
+				if (false === SingFitEditingGenreManagerSetGenre($request, $update)) {
 					$response['errno'] = 808;
 					$response['msg'] = 'This request cannot be processed. Try Again.';
 				}

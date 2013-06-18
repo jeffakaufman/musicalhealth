@@ -6,9 +6,9 @@
 //
 
 require_once dirname(__FILE__).'/../vendor/cfpropertylist-1.1.1/CFPropertyList.php';
+require_once dirname(__FILE__).'/SingFitCryptor.php';
 require_once dirname(__FILE__).'/SingFitDatabaseConnection.php';
 require_once dirname(__FILE__).'/SingFitStoreManager.php';
-require_once dirname(__FILE__).'/SingFitCryptor.php';
 
 function SingFitStoreSongInfoModel($slug = null, $lastpublished = null) {
 	$link = false;
@@ -45,6 +45,8 @@ function SingFitStoreSongInfoModel($slug = null, $lastpublished = null) {
 	}
 	return $model;
 }
+
+
 
 function SingFitStoreProductModel($idcat = 0, $featured = false, $lastpublished = null) {
 	$link = false;
@@ -130,6 +132,125 @@ function SingFitStoreProductModel($idcat = 0, $featured = false, $lastpublished 
 								$song['CanBeShared'] = $rowother['canbeshared'] ? true : false;
 								$song['Identifier'] = $rowother['slug'];
 								$song['PreviewUrl'] = kSingFitAppServiceUrl."/?sn=audio.stream.preview&id=".SingFitEncrypt($rowother['slug']);
+								array_push($songItems, $song);
+							}
+							$isbundle = $row['bundle'] ? true : false;
+							$productname = null;
+							if ($isbundle) {
+								$productname = $row['apple_product_name'];
+							} else {
+								$productname = $songItems[0]['Title'];
+							}
+							$items['Name'] = $productname;
+							$items['Identifier'] = $row['apple_product_id'];
+							$items['Price'] = $row['apple_product_price'];
+							$items['Currency'] = 'USD';
+							$items['OnlyForSubscriber'] = $row['onlyforsubscriber'] ? true : false;
+							$items['FreeForSubscriber'] = $row['freeforsubscriber'] ? true : false;
+							$items['FreeForAll'] = $row['freeforall'] ? true : false;
+							$items['IsBundle'] = $isbundle;
+							$items['Owned'] = false;
+							if ($userid > 0) {
+								if (null != $request) {
+									$items['Owned'] = (null != SingFitStoreUserProductOwned($row['apple_product_id'], $userid, $link)) ? true : false;
+								}
+							}
+							$items['Songs'] = $songItems;
+							array_push($model['ModelItems'], $items);
+						}
+						mysql_free_result($resother);
+					}
+				}
+			}
+			mysql_free_result($res);
+		}
+		SingFitDataBaseClose($link);
+	}
+	return $model;
+}
+
+function SingFitStorePlaylistModel($idplaylist = 0, $idapp = 0) {
+	$link = false;
+	$model = null;
+	if (false !== ($link = SingFitDataBaseConnect())) {
+	   if ($idplaylist == 0)
+	   {
+			$model['ModelName'] = 'Playlist';
+			$model['ModelType'] = 'Collection';
+			$model['ModelPublished'] = new CFDate(time());
+			$model['ModelUrl'] = kSingFitAppSecureServiceUrl.'/?sn=app.view&r=playlist';
+			$model['ModelItems'] = array();	   
+    	   require_once dirname(__FILE__).'/SingFitEditingModels.php';		
+    		$playlists = SingFitAllPlaylistModel();
+    		foreach($playlists['ModelItems'] as $playlist)
+    		{
+        		$playlistNode['Name'] = $playlist['name'];
+        		$playlistNode['NextModelName'] = "Playlist";
+        		$playlistNode['NextModelType'] = 'Collection';
+        		$playlistNode['NextModelUrl'] = kSingFitAppSecureServiceUrl.'/?sn=app.view&r=playlist&id='. $playlist['id'];
+        		$playlistNode['NextModelPublished'] = new CFDate(time());    		
+        		array_push($model['ModelItems'], $playlistNode);
+    		}	
+    		return $model;
+	   }
+	   
+		$row = null;
+		$res = false;
+		$sql = "SELECT 
+					store_product.id as store_product_id, 
+					store_product.apple_product_id, 
+					store_product.apple_product_name, 
+					store_product.apple_product_price,
+					store_product.onlyforsubscriber, 
+					store_product.freeforsubscriber, 
+					store_product.freeforall, 
+					store_product.bundle
+				FROM store_product 
+				INNER JOIN store_product_to_playlist as sp on sp.product_id = store_product.id and sp.playlist_id = %s
+				WHERE store_product.visible=1 
+					AND store_product.apple_product_type=0
+				ORDER BY store_product.apple_product_name
+			";
+			$sql = sprintf($sql, $idplaylist);
+			
+		if (false !== ($res = mysql_query($sql, $link))) {
+			$model = array();
+			$model['ModelName'] = 'Playlist';
+			$model['ModelType'] = 'Collection';
+			$model['ModelPublished'] = new CFDate(time());
+			$model['ModelUrl'] = kSingFitAppSecureServiceUrl.'/?sn=app.view&r=playlist&id='.$idplaylist;
+			$model['ModelItems'] = array();
+			if (mysql_num_rows($res) != 0) {
+				$userid = 0;
+				$request = null;
+				if (null != ($request = SingFitServicesIsValidSecureRequest())) {
+					if (isset($request['POST']['clientidentifier'])) {
+						$userid = SingFitStoreUserIDWithAppleUDID($request['POST']['clientidentifier'], $link);
+					}
+				}
+				while ($row = mysql_fetch_assoc($res)) {
+					$sqlrow = "
+						SELECT 
+							singfit_song.title, singfit_song.author, singfit_song.slug, singfit_song.canbeshared
+						FROM store_product_to_singfit_song, singfit_song 
+						WHERE 
+							store_product_to_singfit_song.product_id=".$row['store_product_id']." 
+							AND store_product_to_singfit_song.song_id = singfit_song.id 
+					";
+					$resother = false;
+					$rowother = null;
+					if (false !== ($resother = mysql_query($sqlrow, $link))) {
+						if (mysql_num_rows($resother) != 0) {
+							$items = array();
+							$songItems = array();
+							while ($rowother = mysql_fetch_assoc($resother)) {
+								$song = array();
+								$song['Title'] = $rowother['title'];
+								$song['Artist'] = $rowother['author']; // should go away beta compatibility
+								$song['Author'] = $rowother['author'];
+								$song['CanBeShared'] = $rowother['canbeshared'] ? true : false;
+								$song['Identifier'] = $rowother['slug'];
+								//$song['PreviewUrl'] = kSingFitAppServiceUrl."/?sn=audio.stream.preview&id=".SingFitEncrypt($rowother['slug']);
 								array_push($songItems, $song);
 							}
 							$isbundle = $row['bundle'] ? true : false;
@@ -310,6 +431,12 @@ function SingFitAppMainModel() {
 		$storeFeatured['NextModelPublished'] = new CFDate($lastpublished);
 		
 		array_push($model['ModelItems'], $storeFeatured);
+
+		$playlistNode['NextModelName'] = "Playlist";
+		$playlistNode['NextModelType'] = 'Collection';
+		$playlistNode['NextModelUrl'] = kSingFitAppSecureServiceUrl.'/?sn=app.view&r=playlist';
+		$playlistNode['NextModelPublished'] = new CFDate($lastpublished);    		
+		array_push($model['ModelItems'], $playlistNode);
 	}
 	return $model;
 }

@@ -15,11 +15,26 @@
 	<body>
 		<div id="container" class="noselect">
 			<div id="topnav" class="noselect">
-				<a href="?an=editing.view&amp;r=allproducts">All Products</a> | 
-				<span class="nohref noselect">{PAGE_TITLE}</span> | 
-				<a href="?an=editing.view&amp;r=allsongs">All Songs</a> | 
-				<a href="?an=editing.view&amp;r=newsong">New Song</a> |
+    			<span class="nohref noselect">(Products -
+				<a href="?an=editing.view&amp;r=allproducts">All</a> | 
+				<a href="?an=editing.view&amp;r=newproduct">New</a>)
+				</span>
+				
+				<span class="nohref noselect">(Songs -
+				<a href="?an=editing.view&amp;r=allsongs">All</a> | 
+				<a href="?an=editing.view&amp;r=newsong">New</a>)
+				</span>
+				
+				<span class="nohref noselect">(Playlist - 
+				<a href="?an=editing.view&amp;r=allplaylists">All</a> |				
+				<a href="?an=editing.view&amp;r=newplaylist">New</a>)
+				</span>
+				
+				<span class="nohref noselect">(Genre - 
+				<a href="?an=editing.view&amp;r=allgenres">All</a> |
+				<a href="?an=editing.view&amp;r=newgenre">New</a>)						
 				<a href="?an=editing.view&amp;r=catalogreport">Catalog Report</a>
+				
 			</div>
 			<div id="setproductformerror" class="error"></div>
 			<form id="setproductform" action="?an=editing.setproduct" method="POST" enctype="multipart/form-data">
@@ -71,6 +86,20 @@
 				<div class="elementspacer"></div>
 				<table>
 					<tr>
+						<td class="label noselect"><span class="plain">Playlist</span> <small>(Select and release to add)</small></td>
+						<td>
+							<select name="playlist" id="playlist">
+								{PLAYLIST_LIST}
+							</select>
+						</td>
+					</tr>
+				</table>		
+				{ATTACHED_PLAYLISTS_VIEW}
+				<div class="elementspacer"></div>
+				<div class="elementline"></div>
+				<div class="elementspacer"></div>
+				<table>
+					<tr>
 						<td class="label noselect"><span class="plain">Genres</span> <small>(Select and release to add)</small></td>
 						<td>
 							<select name="genre" id="genre">
@@ -92,7 +121,7 @@
 							</select>
 						</td>
 					</tr>
-				</table>
+				</table>				
 				{ATTACHED_FEATURES_VIEW}
 				<div class="elementspacer"></div>
 				<div class="elementline"></div>

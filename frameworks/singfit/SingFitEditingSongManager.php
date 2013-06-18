@@ -106,15 +106,18 @@ function SingFitEditingSongManagerGetRawReport($request) {
 	$result = null;
 	if (false !== ($link = SingFitDataBaseConnect())) {
 		$date = mysql_escape_string($request['GET']['d']);
-		$sql = "select * from singfit_song where creation_date < '".$date."'";
-		$sql = "SELECT singfit_song.*, count(store_transaction_request.id) as downloads FROM singfit_song, store_transaction_request,
-		store_product, store_product_to_singfit_song WHERE 
-		store_transaction_request.apple_product_id = store_product.apple_product_id
-		AND store_product_to_singfit_song.product_id = store_product.id
-		AND store_product_to_singfit_song.song_id = singfit_song.id 
-		and creation_date < '%s'
-		group by singfit_song.id";
-		$sql = sprintf($sql, $date);
+		
+		$endDate = new DateTime($date);
+		$endDate = $endDate->add(DateInterval::createFromDateString('1 month'));
+		$endDate = $endDate->format('Y-m-d');
+		$sql = "SELECT singfit_song.* , COUNT( store_transaction_request.id ) AS downloads
+		FROM singfit_song
+        LEFT JOIN store_product_to_singfit_song ON store_product_to_singfit_song.song_id = singfit_song.id
+        LEFT JOIN store_product ON store_product_to_singfit_song.product_id = store_product.id
+        LEFT JOIN store_transaction_request ON store_product.apple_product_id = store_transaction_request.apple_product_id and
+        store_transaction_request.request_date > '%s' and store_transaction_request.request_date < '%s'
+        GROUP BY singfit_song.id";		
+		$sql = sprintf($sql, $date, $endDate);
 		if (false !== ($res = mysql_query($sql, $link))) {
 			$fields = mysql_num_fields($res);
 			for ($i = 0; $i < $fields; $i++) {

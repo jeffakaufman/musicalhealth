@@ -119,6 +119,7 @@ function SingFitEditingProductManagerSetProduct($request, $slug, $update = false
 		$freeforall = isset($request['POST']['freeforall']) ? 1 : 0;
 		$genres = json_decode($request['POST']['attached_genres']);
 		$features = json_decode($request['POST']['attached_features']);
+		$playlists = json_decode($request['POST']['attached_playlists']);		
 		$category = array_merge($genres, $features);
 		$song = json_decode($request['POST']['attached_songs']);
 		$bundle = count($song) > 1 ? 1 : 0;
@@ -181,6 +182,9 @@ function SingFitEditingProductManagerSetProduct($request, $slug, $update = false
 					@mysql_query($sql, $link);
 					$sql = "DELETE FROM store_product_to_singfit_song WHERE product_id=".$idproduct;
 					@mysql_query($sql, $link);
+					//playlist
+					$sql = "DELETE FROM store_product_to_playlist WHERE product_id=".$idproduct;
+					@mysql_query($sql, $link);					
 				}
 				$values = null;
 				foreach ($category as $idcat) {
@@ -208,6 +212,22 @@ function SingFitEditingProductManagerSetProduct($request, $slug, $update = false
 					VALUES ".implode(",", $values)."
 				";
 				@mysql_query($sql, $link);
+				if (count($playlists) > 0)
+				{
+    				$values = null;
+    				foreach ($playlists as $idplaylist) {
+    					$values[] = "(".$idplaylist."  , ".$idproduct.")";
+    				}
+    				$sql = "
+    					INSERT INTO store_product_to_playlist
+    					(
+    						playlist_id, 
+    						product_id
+    					)
+    					VALUES ".implode(",", $values)."
+    				";
+    				@mysql_query($sql, $link);    				
+				}
 				$result = true;
 			}	
 		}

@@ -11,7 +11,7 @@ require_once "/svr/www/frameworks/singfit/SingFitReadStream.php";
 
 $servicename = SingFitServicesNameForRequest();
 switch ($servicename) {
-	case "app.view":
+	case "app.view": //default
 	{
 		$response = null;
 		if (null != ($response = SingFitServicesRequestForView())) {
@@ -20,6 +20,13 @@ switch ($servicename) {
 		}
 	}
 	break;
+	case "playlist.view":
+	{
+		if (null != ($response = SingFitServicesRequestForSongInfo())) {
+			SingFitServicesPrintXMLResponse($response);
+			exit(0);
+		}
+	}	
 	case "song.info":
 	{
 		if (null != ($response = SingFitServicesRequestForSongInfo())) {
@@ -71,7 +78,6 @@ switch ($servicename) {
 	}
 	break;
 }
-
-@header("location:/404");
+//@header("location:/404");
 
 /* EOF */ ?>

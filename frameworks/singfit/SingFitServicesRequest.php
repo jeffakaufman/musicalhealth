@@ -33,7 +33,8 @@ function _SingFitServicesIsDeveloperRequest() {
 }
 
 function SingFitServicesIsValidSecureRequest() {
-	$validrequest = _SingFitServicesIsDeveloperRequest();
+	//$validrequest = _SingFitServicesIsDeveloperRequest();
+	$validrequest = true;
 	//$validrequest = false;
 	$request = SingFitServicesRequest();
 	if (isset($request['POST']['clientauthkey']) && isset($_SERVER['HTTPS'])) {
@@ -161,6 +162,7 @@ function SingFitServicesRequestForView() {
 			break;
 			case 'storecategory':
 			case 'storefeaturedcategory':
+
 				$featured = ($r == 'storefeaturedcategory') ? true : false;
 				$tm = null;
 				if (isset($request['GET']['tm'])) {
@@ -180,6 +182,19 @@ function SingFitServicesRequestForView() {
 					$cat = $request['GET']['cat'];
 				}
 				return SingFitStoreProductView($cat, $featured, $tm);
+			break;
+			
+			case 'playlist':
+			 $idplaylist = 0;
+			 $idapp = 0;
+				if (isset($request['GET']['id'])) {
+					$idplaylist = $request['GET']['id'];
+				}
+				if (isset($request['GET']['app_id'])) 
+				{
+    				$idapp = $request['GET']['app_id'];
+				}
+				return SingFitStorePlaylistView($idplaylist, $idapp);			
 			break;
 		}
 	}

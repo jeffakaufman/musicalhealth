@@ -109,37 +109,6 @@ $(document).ready(function() {
 			$(this).val(0).attr('selected', true)
 		);
 	});
-	//Playlist//
-	$('.playlistdetach').click(function() {
-		$(this).parent().hide();
-		$("#attached_playlists").arrayDel(parseInt(this.id));
-		$(this).parent().remove();
-	});	
-	$('#playlist').change(function() {
-		if ($("#attached_playlists").arrayCount() >= 5) {
-			$.uniform.update(
-				$(this).val(0).attr('selected', true)
-			);
-			return;
-		}
-		var value = $(this).val();
-		var name =  $('#' + this.id + '>option:selected').text();
-		$('.playlistdetach').unbind('click');
-		var vals = $("#attached_playlists").arrayVal();
-		if (-1 == $.inArray(parseInt(value), vals)) {
-			$("#attached_playlists").arrayAdd(parseInt(value));
-			$('#playlistattached').append('<div class="noselect"><a class="noselect playlistdetach" href="#" id="' + value + '">detach</a> <span class="noselect plain-green">' + name + '</span></div>');
-		}
-		$('.playlistdetach').click(function() {
-			$(this).parent().hide();
-			$("#attached_playlists").arrayDel(parseInt(this.id));
-			$(this).parent().remove();
-		});
-		$.uniform.update(
-			$(this).val(0).attr('selected', true)
-		);
-	});
-		
 	$('.featuredetach').click(function() {
 		$(this).parent().hide();
 		$("#attached_features").arrayDel(parseInt(this.id));
@@ -231,13 +200,13 @@ $(document).ready(function() {
 			});
 		}, 300);
 	});
-	$('#setproductform').ajaxForm({
+	$('#setplaylistform').ajaxForm({
 		dataType:'json', 
 		beforeSubmit:_currentRequestFormBeforeCallback, 
 		success:_currentRequestFormSuccessCallback,
 		error:_currentRequestFormErrorCallback
 	});
-	$('#setproductformsave').click(function() {
+	$('#setplaylistformsave').click(function() {
 		if (_currentFecthingIdentifier) {
 			return;
 		}
@@ -245,7 +214,7 @@ $(document).ready(function() {
 			_currentRequestIsSaving = true;
 			$("#overlay").height($(document).height());
 			$("#overlay").fadeIn('slow', function() {});
-			$('#setproductform').submit();
+			$('#setplaylistform').submit();
 			$("html").scrollTop(0);
 			$("body").scrollTop(0);
 			$(document).scrollTop(0);
@@ -266,7 +235,7 @@ function _stripNonASCII(str) {
 
 function _currentRequestFormBeforeCallback(formData, jqForm, options) {
 	_currentRequestIsSaving = true;
-	$("#setproductformerror").hide();
+	$("#setplaylistformerror").hide();
 	return;
 };;;
 
@@ -281,8 +250,8 @@ function _currentRequestFormSuccessCallback(data) {
 		$(document).scrollTop(0);
 		$(window).scrollTop(0);
 		if (data.errno != 0) {
-			$("#setproductformerror").html(data.msg);
-			$("#setproductformerror").show();
+			$("#setplaylistformerror").html(data.msg);
+			$("#setplaylistformerror").show();
 			switch(data.errno) {
 				case 300:
 					$("input[name=apple_product_name]").focus();
@@ -294,9 +263,9 @@ function _currentRequestFormSuccessCallback(data) {
 			}
 			_currentRequestIsSaving = false;
 		} else {
-			$("#setproductformerror").hide();
-			$("#setproductformerror").html("");
-			window.location.href='./?an=editing.view&r=allproducts';
+			$("#setplaylistformerror").hide();
+			$("#setplaylistformerror").html("");
+			window.location.href='./?an=editing.view&r=allplaylists';
 		}
 		return false;
 	}, 2500);
@@ -308,8 +277,8 @@ function _currentRequestFormErrorCallback(xhr, ajaxOptions, thrownError) {
 	}
 	setTimeout(function() { 
 		$("#overlay").hide();
-		$("#setproductformerror").html("This request cannot be processed. Unexpected Error.");
-		$("#setproductformerror").show();
+		$("#setplaylistformerror").html("This request cannot be processed. Unexpected Error.");
+		$("#setplaylistformerror").show();
 		_currentRequestIsSaving = false;
 		return false;
 	}, 500);

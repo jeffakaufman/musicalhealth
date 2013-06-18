@@ -37,6 +37,38 @@ switch ($actionname) {
 		}
 		exit(0);
 	}
+	case "editing.setgenre":
+	{
+		$response = null;
+		if (null != ($response = SingFitEditingRequestForSetGenre())) {
+			SingFitServicesPrintJSONResponse($response);
+		}
+		exit(0);
+	}	
+	case "editing.setplaylist":
+	{
+		$response = null;
+		if (null != ($response = SingFitEditingRequestForSetPlaylist())) {
+			SingFitServicesPrintJSONResponse($response);
+		}
+		exit(0);
+	}	
+	case "editing.deleteplaylist":
+	{
+		$response = null;
+		if (null != ($response = SingFitEditingRequestForDeletePlaylist())) {
+			SingFitServicesPrintJSONResponse($response);
+		}
+		exit(0);
+	}	
+	case "editing.deletegenre":
+	{
+		$response = null;
+		if (null != ($response = SingFitEditingRequestForDeleteGenre())) {
+			SingFitServicesPrintJSONResponse($response);
+		}
+		exit(0);
+	}		
 	case "editing.getproductidentifier":
 	{
 		$response = null;

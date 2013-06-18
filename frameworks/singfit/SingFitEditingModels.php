@@ -235,6 +235,153 @@ function SingFitEditingCategoryModel($featured = false) {
 	return $model;
 }
 
+function SingFitEditingPlaylistModel($idplaylist = 0)
+{
+    $link = false;
+	$model = array();
+	$model['ModelName'] = 'Playlist';
+	$model['ModelType'] = 'List';
+	$model['ModelItemsIndex'] = 0;
+	$model['ModelItems'] = array();
+	$model['AssociatedItems'] = array();	
+	if (false !== ($link = SingFitDataBaseConnect())) {
+		$row = null;
+		$res = false;
+		$menuhead = '__head_playlist__';
+		$sql = "SELECT id, name 
+			FROM playlist ORDER BY name";
+		if (false !== ($res = mysql_query($sql, $link))) {
+			if (mysql_num_rows($res) != 0) {
+				while ($row = mysql_fetch_assoc($res)) {
+					array_push($model['ModelItems'], $row);
+				}
+			}
+			mysql_free_result($res);
+		}
+		
+    	if ($idplaylist > 0) {
+    		$row = null;
+    		$res = false;
+    		$sql = "
+    			SELECT store_product.id, store_product.apple_product_name
+    			FROM store_product
+    			INNER JOIN store_product_to_playlist ON store_product.id = store_product_to_playlist.product_id
+    			WHERE store_product_to_playlist.playlist_id = " .$idplaylist;
+    		if (false !== ($res = mysql_query($sql, $link))) {
+    			if (mysql_num_rows($res) != 0) {
+    				while ($row = mysql_fetch_assoc($res)) {
+    					array_push($model['AssociatedItems'], $row);
+    				}
+    			}
+    			mysql_free_result($res);
+    		}		
+    		
+            $sql = "SELECT app_id from store_app_to_playlist where playlist_id = " . $idplaylist;
+
+			if (false !== ($res = mysql_query($sql, $link))) {
+    			if (mysql_num_rows($res) != 0) 
+    			{    			
+    			    $model['AttachedApp'] = array();
+    				while ($row = mysql_fetch_assoc($res)) {
+    					array_push($model['AttachedApp'], $row['app_id']);
+    				}    			
+    			}
+    			mysql_free_result($res);
+    		}        		
+		}
+		SingFitDataBaseClose($link);
+	}
+	return $model;
+}
+
+function SingFitDeletePlaylistModel($idplaylist = 0)
+{
+
+	if (false !== ($link = SingFitDataBaseConnect())) {
+		$row = null;
+		$res = false;
+		$menuhead = '__head_playlist__';
+		$sql = sprintf("DELETE FROM playlist WHERE id = %d", $idplaylist);
+		if (false !== ($res = mysql_query($sql, $link))) {
+			mysql_free_result($res);
+		}
+		SingFitDataBaseClose($link);
+	}
+	return $model;
+}
+
+function SingFitEditingGenreModel($idgenre = 0)
+{
+    $link = false;
+	$model = array();
+	$model['ModelName'] = 'Genre';
+	$model['ModelType'] = 'List';
+	$model['ModelItemsIndex'] = 0;
+	$model['ModelItems'] = array();
+	$model['AssociatedItems'] = array();	
+	if (false !== ($link = SingFitDataBaseConnect())) {
+		$row = null;
+		$res = false;
+		$menuhead = '__head_playlist__';
+		$sql = "SELECT id, name, visible 
+			FROM store_product_cateogory ORDER BY name";
+		if (false !== ($res = mysql_query($sql, $link))) {
+			if (mysql_num_rows($res) != 0) {
+				while ($row = mysql_fetch_assoc($res)) {
+					array_push($model['ModelItems'], $row);
+				}
+			}
+			mysql_free_result($res);
+		}	
+
+    	if ($idgenre > 0) {
+    		$row = null;
+    		$res = false;
+    		$sql = "
+    			SELECT store_product.id, store_product.apple_product_name
+    			FROM store_product
+    			INNER JOIN store_product_to_category ON store_product.id = store_product_to_category.product_id
+    			WHERE store_product_to_category.category_id = " .$idgenre;
+    		if (false !== ($res = mysql_query($sql, $link))) {
+    			if (mysql_num_rows($res) != 0) {
+    				while ($row = mysql_fetch_assoc($res)) {
+    					array_push($model['AssociatedItems'], $row);
+    				}
+    			}
+    			mysql_free_result($res);
+    		}
+
+    		$sql = "
+    			SELECT *
+    			FROM store_product_category
+    			WHERE store_product_category.id = " .$idgenre;
+			if (false !== ($res = mysql_query($sql, $link))) {
+    			if (mysql_num_rows($res) != 0) {    			
+    				while ($row = mysql_fetch_assoc($res)) {    				
+    					array_push($model['ModelItems'], $row);
+    				}
+    			}
+    			mysql_free_result($res);
+    		}
+    		
+    		$sql = "SELECT app_id from store_app_to_category where category_id = " . $idgenre;
+
+			if (false !== ($res = mysql_query($sql, $link))) {
+    			if (mysql_num_rows($res) != 0) 
+    			{    			
+    			    $model['AttachedApp'] = array();
+    				while ($row = mysql_fetch_assoc($res)) {
+    					array_push($model['AttachedApp'], $row['app_id']);
+    				}    			
+    			}
+    			mysql_free_result($res);
+    		}    		
+		}
+		SingFitDataBaseClose($link);
+	}
+	return $model;
+}
+
 function SingFitEditingAttachedCategoryModel($idproduct = 0, $featured = false) {
 	$link = false;
 	$model = array();
@@ -256,6 +403,35 @@ function SingFitEditingAttachedCategoryModel($idproduct = 0, $featured = false) 
 			WHERE a.id_parent = b.id
 			AND c.category_id = a.id
 		";
+		if (false !== ($res = mysql_query($sql, $link))) {
+			if (mysql_num_rows($res) != 0) {
+				while ($row = mysql_fetch_assoc($res)) {
+					array_push($model['ModelItems'], $row);
+				}
+			}
+			mysql_free_result($res);
+		}
+		SingFitDataBaseClose($link);
+	}
+	return $model;
+}
+
+function SingFitEditingAttachedPlaylistModel($idproduct = 0) {
+	$link = false;
+	$model = array();
+	$model['ModelName'] = 'AttachedPlaylist';
+	$model['ModelType'] = 'List';
+	$model['ModelItemsIndex'] = -1;
+	$model['ModelItems'] = array();
+	if ($idproduct > 0 && false !== ($link = SingFitDataBaseConnect())) {
+		$row = null;
+		$res = false;
+		$sql = "
+			SELECT p.id, p.name
+			FROM playlist p
+			inner JOIN store_product_to_playlist as sp on p.id = sp.playlist_id
+			LEFT JOIN store_product AS s ON s.id = sp.product_id
+			WHERE s.id = " .$idproduct;
 		if (false !== ($res = mysql_query($sql, $link))) {
 			if (mysql_num_rows($res) != 0) {
 				while ($row = mysql_fetch_assoc($res)) {
@@ -399,6 +575,86 @@ function SingFitAllProductModel() {
 				}
 			}
 			mysql_free_result($res);
+		}
+		SingFitDataBaseClose($link);
+	}
+	return $model;
+}
+
+function SingFitAllPlaylistModel() {
+	$link = false;
+	$model = array();
+	$model['ModelName'] = 'AllPlaylist';
+	$model['ModelType'] = 'List';
+	$model['ModelItemsIndex'] = -1;
+	$model['ModelItems'] = array();
+	if (false !== ($link = SingFitDataBaseConnect())) {
+		$row = null;
+		$res = false;
+		$sql = "
+			SELECT *
+			FROM playlist 
+			ORDER BY name";
+		if (false !== ($res = mysql_query($sql, $link))) {
+			if (mysql_num_rows($res) != 0) {
+				while ($row = mysql_fetch_assoc($res)) {
+					array_push($model['ModelItems'], $row);
+				}
+			}
+			mysql_free_result($res);
+		}
+		SingFitDataBaseClose($link);
+	}
+	return $model;
+}
+
+function SingFitAllGenreModel() {
+	$link = false;
+	$model = array();
+	$model['ModelName'] = 'AllGenre';
+	$model['ModelType'] = 'List';
+	$model['ModelItemsIndex'] = -1;
+	$model['ModelItems'] = array();
+	if (false !== ($link = SingFitDataBaseConnect())) {
+		$row = null;
+		$res = false;
+		$sql = "
+			SELECT *
+			FROM store_product_category 
+			ORDER BY name";
+		if (false !== ($res = mysql_query($sql, $link))) {
+			if (mysql_num_rows($res) != 0) {
+				while ($row = mysql_fetch_assoc($res)) {
+					array_push($model['ModelItems'], $row);
+				}
+			}
+			mysql_free_result($res);
+		}
+		SingFitDataBaseClose($link);
+	}
+	return $model;
+}
+
+function SingFitAllAppModel() {
+	$link = false;
+	$model = null;
+
+	$model = array();
+	$model['ModelName'] = 'App';
+	$model['ModelType'] = 'Inline-flatten';
+	if (false !== ($link = SingFitDataBaseConnect())) {
+		$row = null;
+		$res = false;
+        $sql = "SELECT id, corporate, app_bundle_id FROM store_app";  
+		if (false !== ($res = mysql_query($sql, $link)))
+		{			
+		    $i = 0;
+			while ($row = mysql_fetch_assoc($res)) 
+			{
+				$model['ModelItem'][$i]['Title'] = $row['app_bundle_id'];
+				$model['ModelItem'][$i]['Identifier'] = $row['id'];
+				$i++;
+			}
 		}
 		SingFitDataBaseClose($link);
 	}

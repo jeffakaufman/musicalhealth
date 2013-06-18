@@ -23,6 +23,12 @@ function SingFitStoreCategoryView($featured = false, $tm = null) {
 	return SingFitServicesResponse($model);
 }
 
+function SingFitStorePlaylistView($idplaylist = 0, $idapp = 0) {
+	$model = SingFitStorePlaylistModel($idplaylist, $idapp);
+	return SingFitServicesResponse($model);
+}
+
+
 function SingFitAppMainView() {
 	$model = SingFitAppMainModel();
 	return SingFitServicesResponse($model);

@@ -14,11 +14,26 @@
 	<body>
 		<div id="container" class="noselect">
 			<div id="topnav" class="noselect">
-				<a href="?an=editing.view&amp;r=allproducts">All Products</a> | 
-				<a href="?an=editing.view&amp;r=newproduct">New Product</a> | 
-				<a href="?an=editing.view&amp;r=allsongs">All Songs</a> | 
-				<span class="nohref noselect">{PAGE_TITLE}</span> |
+    			<span class="nohref noselect">(Products -
+				<a href="?an=editing.view&amp;r=allproducts">All</a> | 
+				<a href="?an=editing.view&amp;r=newproduct">New</a>)
+				</span>
+				
+				<span class="nohref noselect">(Songs -
+				<a href="?an=editing.view&amp;r=allsongs">All</a> | 
+				<a href="?an=editing.view&amp;r=newsong">New</a>)
+				</span>
+				
+				<span class="nohref noselect">(Playlist - 
+				<a href="?an=editing.view&amp;r=allplaylists">All</a> |				
+				<a href="?an=editing.view&amp;r=newplaylist">New</a>)
+				</span>
+				
+				<span class="nohref noselect">(Genre - 
+				<a href="?an=editing.view&amp;r=allgenres">All</a> |
+				<a href="?an=editing.view&amp;r=newgenre">New</a>)						
 				<a href="?an=editing.view&amp;r=catalogreport">Catalog Report</a>
+
 			</div>
 			<div id="setsongformerror" class="error"></div>
 			<form id="setsongform" action="?an=editing.setsong" method="POST" enctype="multipart/form-data">

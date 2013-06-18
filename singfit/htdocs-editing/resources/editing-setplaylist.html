@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{PAGE_TITLE}</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="resources/editing.css" />
+		<link rel="stylesheet" type="text/css" href="resources/vendor/pixelmatrix-uniform-2446d99/css/uniform.default.css" />
+		<script type="text/javascript" src="resources/vendor/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="resources/vendor/jquery.form.min.js"></script>
+		<script type="text/javascript" src="resources/vendor/jquery.alphanumeric.pack.js"></script>
+		<script type="text/javascript" src="resources/vendor/pixelmatrix-uniform-2446d99/jquery.uniform.patched.js"></script>
+		<script type="text/javascript" src="resources/editing.jquery.utils.js"></script>
+		<script type="text/javascript" src="resources/editing-setplaylist.js"></script>
+	</head>
+	<body>
+		<div id="container" class="noselect">
+			<div id="topnav" class="noselect">
+    			<span class="nohref noselect">(Products -
+				<a href="?an=editing.view&amp;r=allproducts">All</a> | 
+				<a href="?an=editing.view&amp;r=newproduct">New</a>)
+				</span>
+				
+				<span class="nohref noselect">(Songs -
+				<a href="?an=editing.view&amp;r=allsongs">All</a> | 
+				<a href="?an=editing.view&amp;r=newsong">New</a>)
+				</span>
+				
+				<span class="nohref noselect">(Playlist - 
+				<a href="?an=editing.view&amp;r=allplaylists">All</a> |				
+				<a href="?an=editing.view&amp;r=newplaylist">New</a>)
+				</span>
+				
+				<span class="nohref noselect">(Genre - 
+				<a href="?an=editing.view&amp;r=allgenres">All</a> |
+				<a href="?an=editing.view&amp;r=newgenre">New</a>)						
+				<a href="?an=editing.view&amp;r=catalogreport">Catalog Report</a>
+
+			</div>
+			<div id="setplaylistformerror" class="error"></div>
+			<form id="setplaylistform" action="?an=editing.setplaylist" method="POST" enctype="multipart/form-data">
+				<input type="hidden" name="serverauthkey" value="{K_VALUE}" />
+				<input type="hidden" name="q" value="{Q_VALUE}" />
+				<input type="hidden" name="id" value="{ID}" />
+				<table>
+					<tr>
+						<td class="label noselect"><span class="plain">Name</span></td>
+						<td>
+							<input type="text" name="name" value="{NAME}" maxlength="80" placeholder="Name" />
+						</td>
+					</tr>
+					<tr>
+					    <td class="label noselect"><span class="plain">Assigned Apps</span></td>
+					    <td>
+					       {APP_OPTIONS}
+					    </td>
+					</tr>					
+				</table>
+				
+				{PRODUCT_LIST}
+				<div class="buttoncontainer">
+					<input class= "noselect" id="setplaylistformsave" type="button" value="Save"  />
+				</div>
+			</form>
+		</div>
+	</body>
+</html>

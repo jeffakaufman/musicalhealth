@@ -11,7 +11,7 @@
 				<br />
 				<div class="license_info">
 				
-        <?
+        <?php
 		echo $this->Form->input('username');
 		echo $this->Form->input('password', array('type' => 'text', 'class' => 'orgPassword', 'div' => 'passwordBlock'));   
 		echo $this->Form->button('Generate Password', array('onClick' => 'GeneratePassword()'));     
@@ -30,14 +30,14 @@
 		<br />
 				<br />
 		<div class="p_contact">
-		<?
+		<?php
 		echo $this->Form->input('primary_name', array('label' => 'Primary Contact Name'));
 		echo $this->Form->input('primary_phone', array('label' => 'Primary Contact Name'));
 		echo $this->Form->input('primary_email', array('label' => 'Primary Contact Email'));
 		?>
 		</div>
 		<div class="t_contact">
-		<?
+		<?php
 		echo $this->Form->input('tech_name', array('label' => 'Technical Contact Name'));
 		echo $this->Form->input('tech_phone', array('label' => 'Technical Contact Phone'));
 		echo $this->Form->input('tech_email', array('label' => 'Technical Contact Email'));

@@ -14,7 +14,7 @@
         <?php
 		echo $this->Form->input('username');
 		echo $this->Form->input('password', array('type' => 'text', 'class' => 'orgPassword', 'div' => 'passwordBlock'));   
-		echo $this->Form->button('Generate Password', array('onClick' => 'GeneratePassword()'));     
+//		echo $this->Form->button('Generate Password', array('onClick' => 'GeneratePassword()'));     
 		echo $this->Form->input('licenses');
 		echo $this->Form->input('expiration');
 		?>

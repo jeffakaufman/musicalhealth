@@ -209,10 +209,9 @@ function SingFitStorePlaylistModel($idplaylist = 0, $idapp = 0) {
 				INNER JOIN store_product_to_playlist as sp on sp.product_id = store_product.id and sp.playlist_id = %s
 				WHERE store_product.visible=1 
 					AND store_product.apple_product_type=0
-				ORDER BY store_product.apple_product_name
+				ORDER BY sp.order, sp.id
 			";
 			$sql = sprintf($sql, $idplaylist);
-			
 		if (false !== ($res = mysql_query($sql, $link))) {
 			$model = array();
 			$model['ModelName'] = 'Playlist';

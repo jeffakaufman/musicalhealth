@@ -160,6 +160,13 @@ function SingFitEditingPlaylistManagerSetPlaylist($request, $slug, $update = fal
         		$sql = "INSERT INTO store_app_to_playlist (id, app_id, playlist_id) VALUES (NULL, " . $app_id . ", " . $playlist_id . ")";
     			@mysql_query($sql, $link);
     		}
+    		$productOrder = 0;
+    		foreach ($request['POST']['product_id'] as $product_id)
+    		{
+        		$sql = sprintf("UPDATE store_product_to_playlist set store_product_to_playlist.order = %d where product_id = %d and playlist_id = %d", $productOrder, $product_id, $playlist_id);
+        		@mysql_query($sql, $link);
+        		$productOrder++;
+    		}
 			$result = true;					
 		}
 		SingFitDataBaseClose($link);

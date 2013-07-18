@@ -255,10 +255,12 @@ function SingFitEditingSetPlaylistView($templatepath, $idplaylist = 0) {
 		if (count($model['AssociatedItems']) > 0)
 		{
 		      $productList = "<div>Songs in playlist</div>";
+		      $productList .= "<ul id='sortable'>";
     		foreach($model['AssociatedItems'] as $item)
     		{
-        		$productList .= sprintf("<div><a href='/editing/?an=editing.view&r=editproduct&idproduct=%d'>%s</a></div>", $item['id'], $item['apple_product_name']);
+        		$productList .= sprintf("<div class='sortable'><input type='hidden' name='product_id[]' value='%d'><a href='/editing/?an=editing.view&r=editproduct&idproduct=%d'>%s</a></div>", $item['id'], $item['id'], $item['apple_product_name']);
     		}
+		      $productList .= "</ul>";    		
 		}
 		$search = array(
 			'{PAGE_TITLE}',

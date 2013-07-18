@@ -11,6 +11,7 @@
 		<script type="text/javascript" src="resources/vendor/pixelmatrix-uniform-2446d99/jquery.uniform.patched.js"></script>
 		<script type="text/javascript" src="resources/editing.jquery.utils.js"></script>
 		<script type="text/javascript" src="resources/editing-setplaylist.js"></script>
+		<script type="text/javascript" src="resources/vendor/jquery-ui.js"></script>
 	</head>
 	<body>
 		<div id="container" class="noselect">
@@ -62,5 +63,11 @@
 				</div>
 			</form>
 		</div>
+  <script>
+  $(function() {
+    $( "#sortable" ).sortable();
+    $( "#sortable" ).disableSelection();
+  });
+  </script>		
 	</body>
 </html>

@@ -262,11 +262,12 @@ function SingFitEditingPlaylistModel($idplaylist = 0)
     	if ($idplaylist > 0) {
     		$row = null;
     		$res = false;
-    		$sql = "
+    		$sql = sprintf("
     			SELECT store_product.id, store_product.apple_product_name
     			FROM store_product
     			INNER JOIN store_product_to_playlist ON store_product.id = store_product_to_playlist.product_id
-    			WHERE store_product_to_playlist.playlist_id = " .$idplaylist;
+    			WHERE store_product_to_playlist.playlist_id = %d
+    			ORDER BY store_product_to_playlist.order, store_product_to_playlist.id", $idplaylist);
     		if (false !== ($res = mysql_query($sql, $link))) {
     			if (mysql_num_rows($res) != 0) {
     				while ($row = mysql_fetch_assoc($res)) {

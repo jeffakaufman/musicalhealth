@@ -114,12 +114,13 @@ function __SingFitAppleStoreReceiptResponse($data) {
 	if (!is_array($receipt)) {
 		SingFitAppleStoreSetErrno(100007);
 		return null;
-	}	
+	}
 	$quantity = isset($receipt['quantity']) ? $receipt['quantity'] : 1;
 	$product_id = isset($receipt['product_id']) ? $receipt['product_id'] : null;
 	$transaction_id = isset($receipt['transaction_id']) ? $receipt['transaction_id'] : null;
 	$purchase_date = isset($receipt['purchase_date']) ? SingFitDateTimeUtilitiesNonIsoGMTDateToDateTime($receipt['purchase_date']) : null;
-	$expires_date = isset($receipt['expires_date']) ? SingFitDateTimeUtilitiesUnixTimeStampToDateTime($receipt['expires_date'] / 1000) : null;
+	$expires_time = isset($receipt['expires_date']) ? ($receipt['expires_date'] / 1000) : null;
+	$expires_date = isset($receipt['expires_date']) ? SingFitDateTimeUtilitiesUnixTimeStampToDateTime($expires_time) : null;
 	$latest_receipt = isset($data['latest_receipt']) ? $data['latest_receipt'] : null;
 	$original_transaction_id =  isset($receipt['original_transaction_id']) ? $receipt['original_transaction_id'] : null;
 	$original_purchase_date = isset($receipt['original_purchase_date']) ? SingFitDateTimeUtilitiesNonIsoGMTDateToDateTime($receipt['original_purchase_date']) : null;
@@ -127,6 +128,18 @@ function __SingFitAppleStoreReceiptResponse($data) {
 	$version_external_identifier = isset($receipt['version_external_identifier']) ? $receipt['version_external_identifier'] : null;
 	$bid = isset($receipt['bid']) ? $receipt['bid'] : null;
 	$bvrs = isset($receipt['bvrs']) ? $receipt['bvrs'] : null;
+
+	//dug - check for latest_receipt_info and update expires date
+	if (isset($data['latest_receipt_info']))
+	{
+		$latest_info = $data['latest_receipt_info'];
+		if (is_array($latest_info) && isset($latest_info['expires_date']))
+		{
+			$expires_time = $latest_info['expires_date'] / 1000;
+			$expires_date = SingFitDateTimeUtilitiesUnixTimeStampToDateTime($expires_time);
+		}
+	}
+
 	return array(
 		'receipt_data' => $data['receipt_data'],
 		'receipt' => json_encode($receipt),
@@ -134,6 +147,7 @@ function __SingFitAppleStoreReceiptResponse($data) {
 		'product_id' => $product_id,
 		'transaction_id' => $transaction_id,
 		'purchase_date' => $purchase_date,
+		'expires_time' => $expires_time,
 		'expires_date' => $expires_date,
 		'latest_receipt' => $latest_receipt,
 		'original_transaction_id' => $original_transaction_id,
@@ -153,6 +167,7 @@ function __SingFitAppleStoreFakeVerifyReceipt($receipt, $secret = null) {
 		'product_id' => 1,
 		'transaction_id' => 1,
 		'purchase_date' => '0000-00-00 00:00:00',
+		'expires_time' => 0,
 		'expires_date' => '0000-00-00 00:00:00',
 		'latest_receipt' => '',
 		'original_transaction_id' => 1,

@@ -35,10 +35,10 @@ class Org extends AppModel {
 	public function beforeSave($options = array())
 	{
     	$this->data['Org']['hash'] = md5($this->data['Org']['password']);
-    	if (!array_key_exists('id', $this->data['Org']))
-    	{
-            $this->data['Org']['remaining'] = $this->data['Org']['licenses'];
-    	}
+    	//if (!array_key_exists('id', $this->data['Org']))
+    	//{
+            //$this->data['Org']['remaining'] = $this->data['Org']['licenses'];
+    	//}
     	return true;
 	}
 	public function checkUser($username, $password)
@@ -49,7 +49,7 @@ class Org extends AppModel {
     	        'hash' => md5($password)
     	        ),
     	   'fields' => array(
-    	        'Org.name', 'Org.community', 'Org.licenses', 'Org.remaining', 'Org.expiration'
+    	        'Org.id', 'Org.name', 'Org.community', 'Org.licenses', 'Org.remaining', 'Org.expiration'
                 )));
         if ($org == null)
         {
@@ -62,11 +62,13 @@ class Org extends AppModel {
         } 
         
         $expirationDate = new DateTime($org['Org']['expiration']);
-        if (new DateTime() < $expirationDate)
+        if (new DateTime() > $expirationDate)
         {
             return 'expired';
         }
         
+        $this->id = $org['Org']['id'];
+        $this->saveField('remaining', --$org['Org']['remaining'], false);
         return $org;
 	}
 }

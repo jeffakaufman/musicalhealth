@@ -29,7 +29,7 @@ function GeneratePassword() {
 
     document.orgForm.OrgPassword.value = sPassword
 
-    return true;
+    return false;
 }
 
 function getRandomNum() {

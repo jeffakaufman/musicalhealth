@@ -24,40 +24,57 @@ public function login()
     $this->autoRender = false;
 	if ($this->request->is('post')) 
 	{
-	    $valid = $this->Org->checkUser($this->request->data('username'), $this->request->data('password'));
-	    $xmlstr = "<?xml version='1.0' standalone='yes'?>
-	    <response>
-	    </response>";
+	    $valid = @$this->Org->checkUser($this->request->data('username'), $this->request->data('password'));
+	 
+	    $xmlstr = '<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">	    
+	    <plist version="1.0">
+        </plist>';
 	    $response = new SimpleXMLElement($xmlstr);
+        $response->addChild('dict');	    
+        $responseBody = $response->dict;
+        $responseBody->addChild('key', 'response');
+        $responseBody->addChild('dict');
 	    if (is_array($valid))
-	    {
-    	    $response->addChild('status', 'valid');
-    	    $response->addChild('metadata');
-    	    $response->metadata->addChild('company', $valid['Org']['name']);
-    	    $response->metadata->addChild('community', $valid['Org']['community']);
-    	    $response->metadata->addChild('licenses_remaining', $valid['Org']['remaining']);    	    
-    	    $response->metadata->addChild('expires', $valid['Org']['expiration']);    	    
-    	    
+	    {    	    	    
+    	   $responseBody->dict->addChild('key', 'status');
+    	   $responseBody->dict->addChild('string', 'valid');    	
+    	   
+    	   $responseBody->dict->addChild('key', 'expires');
+    	   $responseBody->dict->addChild('string', $valid['Org']['expiration']);   
+    	   
+    	   $responseBody->dict->addChild('key', 'company');
+    	   $responseBody->dict->addChild('string', $valid['Org']['name']);   
+    	   
+    	   $responseBody->dict->addChild('key', 'community');
+    	   $responseBody->dict->addChild('string', $valid['Org']['community']);   
+
+    	   $responseBody->dict->addChild('key', 'licenses_remaining');
+    	   $responseBody->dict->addChild('string', $valid['Org']['remaining']);       	           	        	    
 	    }
 	    else if ($valid == 'expired')
 	    {
-    	    $response->addChild('status', 'invalid');
-    	    $response->addChild('message', 'The license for your organization has expired');
+    	   $responseBody->dict->addChild('key', 'message');        
+    	   $responseBody->dict->addChild('string', 'The license for your organization has expired');
+    	   $responseBody->dict->addChild('key', 'status');
+    	   $responseBody->dict->addChild('string', 'invalid');    	        	    
 	    }
 	    else if ($valid == 'exhausted')
 	    {
-    	    $response->addChild('status', 'invalid');
-    	    $response->addChild('message', 'No more licenses are available for this organization');
+    	   $responseBody->dict->addChild('key', 'status');
+    	   $responseBody->dict->addChild('string', 'invalid');    	        	    
+    	   $responseBody->dict->addChild('key', 'message');        
+    	   $responseBody->dict->addChild('string', 'No more licenses are available for this organization');
 	    }
 	    else if ($valid == false)
 	    {
-    	    $response->addChild('status', 'invalid');
-    	    $response->addChild('message', 'Invalid username or password');
+    	   $responseBody->dict->addChild('key', 'status');
+    	   $responseBody->dict->addChild('string', 'invalid');    	        	    
+    	   $responseBody->dict->addChild('key', 'message');        
+    	   $responseBody->dict->addChild('string', 'Invalid username or password');
 	    }	    
 	    header ("Content-Type:text/xml");  
-	    print_r($response->asXML());
-        //echo $this->Xml->header(array('version'=>'1.1'));
-        //echo $this->Xml->serialize($valid, array('format' => 'tags'));	    
+	    print_r($response->asXML());    
 	}
 	else
 	{

@@ -495,7 +495,6 @@ p.error em {
 .actions li {
 	margin:0 0 0.5em 0;
 	list-style-type: none;
-	white-space: nowrap;
 	padding: 0;
 }
 .actions ul li a {

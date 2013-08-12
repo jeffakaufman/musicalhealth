@@ -4,7 +4,7 @@
 	<tr>
 			<th><?php echo $this->Paginator->sort('name', 'Company Name'); ?></th>
 			<th><?php echo $this->Paginator->sort('community', 'Community Name'); ?></th>			
-			<th><?php echo $this->Paginator->sort('licenses'); ?></th>
+			<th><?php echo $this->Paginator->sort('remaining', 'Remaining Licenses'); ?></th>
 			<th><?php echo $this->Paginator->sort('expiration', 'License Expires'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
@@ -13,7 +13,7 @@
 	<tr>
 		<td><?php echo h($org['Org']['name']); ?>&nbsp;</td>
 		<td><?php echo h($org['Org']['community']); ?>&nbsp;</td>		
-		<td><?php echo h($org['Org']['licenses']); ?>&nbsp;</td>
+		<td><?php echo h($org['Org']['remaining']); ?>&nbsp;</td>
 		<td><?php echo h($org['Org']['expiration']); ?>&nbsp;</td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $org['Org']['id'])); ?>

@@ -57,6 +57,41 @@ function SingFitStoreUserLastTransactionId($productid = 0, $userid = 0, $link = 
 	return $transactionid;
 }
 
+function SingFitStoreConvertAppleLatestReceiptToArray($receipt)
+{
+	$receipt = base64_decode($receipt);
+	$receipt = str_replace("{\n\t", "{", $receipt);
+	$receipt = str_replace(" = ", ":", $receipt);
+	$receipt = str_replace(";\n", ",", $receipt);
+	$receipt = str_replace("\t", "", $receipt);
+	$receipt = str_replace(",}", "}", $receipt);
+	$array = json_decode($receipt, true);
+	if (JSON_ERROR_NONE != json_last_error())
+	{
+		echo "convertAppleLatestReceiptToArray json error = ";
+		echo json_last_error();
+		echo "\n";
+		echo $receipt;
+		return null;
+	}	
+	if (!is_array($array))
+	{
+		echo "convertAppleLatestReceiptToArray not array type\n";
+		return null;
+	}
+	return $array;
+}
+
+function SingFitStoreDecodeAppleLatestReceipt($data)
+{
+	$latest = SingFitStoreConvertAppleLatestReceiptToArray($data);
+	var_dump($latest);
+	if (isset($latest['purchase-info']))
+	$purchase_info = SingFitStoreConvertAppleLatestReceiptToArray($latest['purchase-info']);
+	var_dump($purchase_info);
+	return $purchase_info;
+}
+
 function SingFitStoreUserIsSubscriber($request, $link = false, &$expires = 0, &$corporate = false) {
 	$bundleid = _kSingFitStoreProductRoot;
 	if (isset($request['POST']['clientappid'])) {
@@ -96,7 +131,15 @@ function SingFitStoreUserIsSubscriber($request, $link = false, &$expires = 0, &$
 						$response = SingFitAppleStoreVerifyReceipt($transaction['receipt_data'], $secret, $useAppleSandbox);
 						if (null != $response) {
 							$now = time();
+							//dug - bug was here
+							//the test below is using $transaction['expires_time"] which is from the existing db entry
+							//but the response may contain a 'latest_receipt_info' that must be decoded and checked
 							$expires = $transaction['expires_time'];
+							//to fix, I added a check for latest_receipt_info in __SingFitAppleStoreReceiptResponse
+							//if latest_receipt_info is there, it updates the expires_time in the response
+							if (null != $response['expires_time']) {
+								$expires = $response['expires_time'];
+							}
 							if ($now > $expires) {
 								return false;
 							}
@@ -225,7 +268,7 @@ function SingFitStoreAppleTransactionParseField($data) {
 
 function SingFitStoreLogAppleTransaction($apple_transaction, $useAppleSandbox = false) {
 	$link = false;
-	 // restored transaction
+	// restored transaction
 	if (is_null($apple_transaction['expires_date']) && $apple_transaction['product_id'] == _kSingFitStoreProductMonthlySubscription) {
 		if (!is_null($apple_transaction['latest_receipt'])) {
 			$transaction = SingFitStoreGetTransactionWithReceiptData($apple_transaction['latest_receipt']);

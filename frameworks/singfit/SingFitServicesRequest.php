@@ -16,7 +16,7 @@ function _SingFitServicesIsDeveloperRequest() {
 	global $_singfit_services_request;
 	$validrequest = false;
 	if (!isset($_singfit_services_request['DEVELOPER'])) {
-	/**	if (
+		if (
 			$_SERVER['REMOTE_ADDR'] == "99.8.139.39" || // Jeff Kaufman
 			$_SERVER['REMOTE_ADDR'] == "173.228.86.114" || // sww-office
 			$_SERVER['REMOTE_ADDR'] == "98.149.26.84" || // hayden-home
@@ -25,7 +25,7 @@ function _SingFitServicesIsDeveloperRequest() {
 		) {
 			$_singfit_services_request['DEVELOPER'] = 'ON';
 			$validrequest = true;
-		}**/
+		}
 	} else {
 		$validrequest = true;
 	}
@@ -33,9 +33,8 @@ function _SingFitServicesIsDeveloperRequest() {
 }
 
 function SingFitServicesIsValidSecureRequest() {
-	//$validrequest = _SingFitServicesIsDeveloperRequest();
+$validrequest = _SingFitServicesIsDeveloperRequest();
 	$validrequest = true;
-	//$validrequest = false;
 	$request = SingFitServicesRequest();
 	if (isset($request['POST']['clientauthkey']) && isset($_SERVER['HTTPS'])) {
 		if ($request['POST']['clientauthkey'] == kSingFitServiceClientAuthKey) {
@@ -162,7 +161,6 @@ function SingFitServicesRequestForView() {
 			break;
 			case 'storecategory':
 			case 'storefeaturedcategory':
-
 				$featured = ($r == 'storefeaturedcategory') ? true : false;
 				$tm = null;
 				if (isset($request['GET']['tm'])) {
@@ -182,19 +180,6 @@ function SingFitServicesRequestForView() {
 					$cat = $request['GET']['cat'];
 				}
 				return SingFitStoreProductView($cat, $featured, $tm);
-			break;
-			
-			case 'playlist':
-			 $idplaylist = 0;
-			 $idapp = 0;
-				if (isset($request['GET']['id'])) {
-					$idplaylist = $request['GET']['id'];
-				}
-				if (isset($request['GET']['app_id'])) 
-				{
-    				$idapp = $request['GET']['app_id'];
-				}
-				return SingFitStorePlaylistView($idplaylist, $idapp);			
 			break;
 		}
 	}

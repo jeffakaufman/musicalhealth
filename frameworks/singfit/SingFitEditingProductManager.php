@@ -183,8 +183,8 @@ function SingFitEditingProductManagerSetProduct($request, $slug, $update = false
 					$sql = "DELETE FROM store_product_to_singfit_song WHERE product_id=".$idproduct;
 					@mysql_query($sql, $link);
 					//playlist
-					$sql = "DELETE FROM store_product_to_playlist WHERE product_id=".$idproduct;
-					@mysql_query($sql, $link);					
+					//$sql = "DELETE FROM store_product_to_playlist WHERE product_id=".$idproduct;
+					//@mysql_query($sql, $link);					
 				}
 				$values = null;
 				foreach ($category as $idcat) {
@@ -212,21 +212,49 @@ function SingFitEditingProductManagerSetProduct($request, $slug, $update = false
 					VALUES ".implode(",", $values)."
 				";
 				@mysql_query($sql, $link);
-				if (count($playlists) > 0)
+				$deleteArray = array();
+				$createArray = array();
+				 $existingPlaylists = array();
+				$query = sprintf("SELECT * FROM store_product_to_playlist where product_id = '%s'", $idproduct);
+				$result = mysql_query($query);
+				while($row = mysql_fetch_assoc($result)) //populate delete array from items in DB but not in form POST
 				{
-    				$values = null;
-    				foreach ($playlists as $idplaylist) {
-    					$values[] = "(".$idplaylist."  , ".$idproduct.")";
-    				}
-    				$sql = "
+					if(!in_array($row['playlist_id'], $playlists))
+					{
+						$deleteArray[] = $row['playlist_id'];
+					}
+					else
+					{
+						$existingPlaylists[] = $row['playlist_id'];
+					}
+				}	
+				foreach ($playlists as $playlist_id) //populate create array from items in form POST but not in DB
+				{
+					if (!in_array($playlist_id, $existingPlaylists))
+					{
+						$createArray[] = $playlist_id;
+					}
+				}
+				if (count($deleteArray) > 0)
+				{
+    					$sql = sprintf("DELETE FROM store_product_to_playlist where product_id = %s and playlist_id in (%s)", $idproduct, implode(",", $deleteArray));
+    					@mysql_query($sql, $link);    				
+				}
+				if (count($createArray) > 0)
+				{
+    					$values = null;
+    					foreach ($createArray as $idplaylist) {
+    						$values[] = "(".$idplaylist."  , ".$idproduct.")";
+    					}
+    					$sql = "
     					INSERT INTO store_product_to_playlist
     					(
     						playlist_id, 
     						product_id
     					)
     					VALUES ".implode(",", $values)."
-    				";
-    				@mysql_query($sql, $link);    				
+   					";
+    					@mysql_query($sql, $link);    				
 				}
 				$result = true;
 			}	

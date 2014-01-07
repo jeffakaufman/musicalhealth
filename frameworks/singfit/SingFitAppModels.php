@@ -181,7 +181,7 @@ function SingFitStorePlaylistModel($idplaylist = 0, $idapp = 0) {
 			$model['ModelUrl'] = kSingFitAppSecureServiceUrl.'/?sn=app.view&r=playlist';
 			$model['ModelItems'] = array();	   
     	   require_once dirname(__FILE__).'/SingFitEditingModels.php';		
-    		$playlists = SingFitAllPlaylistModel();
+    		$playlists = SingFitAllPlaylistModel($idapp);
     		foreach($playlists['ModelItems'] as $playlist)
     		{
         		$playlistNode['Name'] = $playlist['name'];
@@ -208,8 +208,8 @@ function SingFitStorePlaylistModel($idplaylist = 0, $idapp = 0) {
 				FROM store_product 
 				INNER JOIN store_product_to_playlist as sp on sp.product_id = store_product.id and sp.playlist_id = %s
 				WHERE store_product.visible=1 
-					AND store_product.apple_product_type=0
-				ORDER BY sp.order, sp.id
+					AND store_product.apple_product_type=0";
+				$sql .= "ORDER BY sp.order, sp.id;
 			";
 			$sql = sprintf($sql, $idplaylist);
 		if (false !== ($res = mysql_query($sql, $link))) {

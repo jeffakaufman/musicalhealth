@@ -161,11 +161,15 @@ function SingFitEditingPlaylistManagerSetPlaylist($request, $slug, $update = fal
     			@mysql_query($sql, $link);
     		}
     		$productOrder = 0;
-    		foreach ($request['POST']['product_id'] as $product_id)
+    		if (array_key_exists('product_id', $request['POST']))
     		{
-        		$sql = sprintf("UPDATE store_product_to_playlist set store_product_to_playlist.order = %d where product_id = %d and playlist_id = %d", $productOrder, $product_id, $playlist_id);
-        		@mysql_query($sql, $link);
-        		$productOrder++;
+        		foreach ($request['POST']['product_id'] as $product_id)
+        		{
+            		$sql = sprintf("UPDATE store_product_to_playlist set store_product_to_playlist.order = %d where product_id = %d and playlist_id = %d", $productOrder, $product_id, $playlist_id);
+            		@mysql_query($sql, $link);
+            		$productOrder++;
+        		}
+        		
     		}
 			$result = true;					
 		}

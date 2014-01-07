@@ -166,11 +166,11 @@ function SingFitEditingRequestForReportDownload()
 			$filename = "singfit-catalog-precalculated-report-".mysql_escape_string($request['GET']['d']).".txt";
 		}
 	}
-//	@header("Content-Type: application/octet-stream");
-//	@header("Cache-Control: public, must-revalidate, max-age=0");
-//	@header("Pragma: no-cache");
-//	@header("Content-Disposition: attachment; filename=".$filename);
-//	@header("Content-Transfer-Encoding: binary\n");
+	@header("Content-Type: application/octet-stream");
+	@header("Cache-Control: public, must-revalidate, max-age=0");
+	@header("Pragma: no-cache");
+	@header("Content-Disposition: attachment; filename=".$filename);
+	@header("Content-Transfer-Encoding: binary\n");
 	echo $data;
 }
 

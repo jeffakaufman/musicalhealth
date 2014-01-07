@@ -582,7 +582,7 @@ function SingFitAllProductModel() {
 	return $model;
 }
 
-function SingFitAllPlaylistModel() {
+function SingFitAllPlaylistModel($appid = 0) {
 	$link = false;
 	$model = array();
 	$model['ModelName'] = 'AllPlaylist';
@@ -592,10 +592,13 @@ function SingFitAllPlaylistModel() {
 	if (false !== ($link = SingFitDataBaseConnect())) {
 		$row = null;
 		$res = false;
-		$sql = "
-			SELECT *
-			FROM playlist 
-			ORDER BY name";
+		
+		$sql = "SELECT * FROM playlist ";			
+		if ($appid != 0)
+		{
+    		$sql .= sprintf(" inner join store_app_to_playlist as sp on sp.playlist_id = playlist.id and sp.app_id = %d ", $appid);
+		}
+        $sql .= "ORDER BY name";
 		if (false !== ($res = mysql_query($sql, $link))) {
 			if (mysql_num_rows($res) != 0) {
 				while ($row = mysql_fetch_assoc($res)) {

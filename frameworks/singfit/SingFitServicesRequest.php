@@ -192,9 +192,9 @@ function SingFitServicesRequestForView() {
 				}
 				if (isset($request['POST']['clientappid'])) {
 					$bundleid = $request['POST']['clientappid'];
-                    			$appinfo = SingFitStoreGetAppInfo($bundleid);
-                    			$idapp = $appinfo['id'];
-				}	
+                    $appinfo = SingFitStoreGetAppInfo($bundleid);
+                    $idapp = $appinfo['id'];
+				}
 				return SingFitStorePlaylistView($idplaylist, $idapp);			
 			break;
 		}

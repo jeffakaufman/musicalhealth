@@ -593,7 +593,7 @@ function SingFitAllPlaylistModel($appid = 0) {
 		$row = null;
 		$res = false;
 		
-		$sql = "SELECT * FROM playlist ";			
+		$sql = "SELECT playlist.id, name FROM playlist ";			
 		if ($appid != 0)
 		{
     		$sql .= sprintf(" inner join store_app_to_playlist as sp on sp.playlist_id = playlist.id and sp.app_id = %d ", $appid);

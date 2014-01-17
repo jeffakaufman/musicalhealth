@@ -180,7 +180,7 @@ function SingFitStorePlaylistModel($idplaylist = 0, $idapp = 0) {
 			$model['ModelPublished'] = new CFDate(time());
 			$model['ModelUrl'] = kSingFitAppSecureServiceUrl.'/?sn=app.view&r=playlist';
 			$model['ModelItems'] = array();	   
-    	   require_once dirname(__FILE__).'/SingFitEditingModels.php';		
+    	    require_once dirname(__FILE__).'/SingFitEditingModels.php';		
     		$playlists = SingFitAllPlaylistModel($idapp);
     		foreach($playlists['ModelItems'] as $playlist)
     		{
